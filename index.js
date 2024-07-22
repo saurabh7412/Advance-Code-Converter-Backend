@@ -65,7 +65,7 @@ app.get("/getToken", async (req, res) => {
           client_id: CLIENT_ID,
           client_secret: CLIENT_SECRET,
           code: req.query.code,
-          redirect_uri: `your-domain/integrations/github/oauth2/callback`,
+          redirect_uri: `http://localhost:3000/`,
         },
         headers: {
           "Accept": "application/json",
