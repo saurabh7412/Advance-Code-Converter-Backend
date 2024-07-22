@@ -1,5 +1,4 @@
 const express = require("express");
-const axios = require("axios");
 const app = express();
 const cors = require("cors");
 const { Octokit } = require("@octokit/rest");
@@ -16,57 +15,28 @@ app.get("/", (req, res) => {
   res.json({ data: "Backend Github AI" });
 });
 
-// app.get("/getToken", async (req, res) => {
-//   console.log("code", req.query.code);
-//   const params =
-//     "?client_id=" +
-//     CLIENT_ID +
-//     "&client_secret=" +
-//     CLIENT_SECRET +
-//     "&code=" +
-//     req.query.code +
-//     "&scope=repo";
-
-//   console.log("params", params);
-
-//   await fetch("https://github.com/login/oauth/access_token" + params, {
-//     method: "POST",
-//     headers: {
-//       Accept: "application/json",
-//     },
-//   })
-//     .then((res) => res.json())
-//     .then((data) => res.json(data))
-//     .catch((error) => console.error("Error fetching token:", error));
-// });
-
 app.get("/getToken", async (req, res) => {
   console.log("code", req.query.code);
+  const params =
+    "?client_id=" +
+    CLIENT_ID +
+    "&client_secret=" +
+    CLIENT_SECRET +
+    "&code=" +
+    req.query.code +
+    "&scope=repo";
 
-  const params = new URLSearchParams({
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-    code: req.query.code,
-    redirect_uri: 'http://localhost:3000/',
-  });
+  console.log("params", params);
 
-  try {
-    const response = await axios.post(
-      "https://github.com/login/oauth/access_token",
-      params.toString(),
-      {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    const access_token = response.data.access_token;
-    res.json({ access_token });
-  } catch (err) {
-    console.error("Error fetching access token:", err);
-    res.status(500).json({ error: `Failed to fetch access token: ${err.message}` });
-  }
+  await fetch("https://github.com/login/oauth/access_token" + params, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => res.json(data))
+    .catch((error) => console.error("Error fetching token:", error));
 });
 
 app.post("/push", async (req, res) => {
