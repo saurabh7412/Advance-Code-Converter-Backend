@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios");
 const app = express();
 const cors = require("cors");
 const { Octokit } = require("@octokit/rest");
@@ -56,26 +57,24 @@ app.get("/getToken", async (req, res) => {
 
   console.log("params", params.toString());
 
-  await fetch("https://github.com/login/oauth/access_token", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params.toString(),
-  })
-    .then((response) => {
-      console.log("res", response);
-      return response.json();
-    })
-    .then((data) => {
-      console.log("data", data);
-      res.json(data);
-    })
-    .catch((error) => {
-      console.error("Error fetching access token:", error);
-      res.status(500).send("Error fetching access token");
-    });
+  const res = await axios.get(
+    "https://github.com/login/oauth/access_token",
+    {
+      params: {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code: code,
+        redirect_uri: `your-domain/integrations/github/oauth2/callback`,
+      },
+      headers: {
+        "Accept": "application/json",
+        "Accept-Encoding": "application/json",
+      },
+    }
+  );
+  console.log("res", res.data);
+  const access_token = res.data.access_token;
+  res.json(access_token);
 });
 
 app.post("/push", async (req, res) => {
