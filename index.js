@@ -17,6 +17,10 @@ app.get("/", (req, res) => {
 
 app.get("/getToken", async (req, res) => {
   console.log("code", req.query.code);
+  let data = new FormData()
+  data.append('client_id', CLIENT_ID)
+  data.append('client_secret', CLIENT_SECRET)
+  data.append('code', req.query.code)
   const params =
     "?client_id=" +
     CLIENT_ID +
@@ -28,12 +32,14 @@ app.get("/getToken", async (req, res) => {
 
   console.log("params", params);
 
-  await fetch("https://github.com/login/oauth/access_token" + params, {
+  // await fetch("https://github.com/login/oauth/access_token" + params, {
+  await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
       'Accept': "application/json",
     },
+    body: data
   })
     .then((res) => res.json())
     .then((data) => res.json(data))
