@@ -35,14 +35,9 @@ app.get("/", (req, res) => {
 //       Accept: "application/json",
 //     },
 //   })
-//     .then((res) => {
-//       console.log("res", res)
-//       return res.json()
-//     })
-//     .then((data) => {
-//       console.log("data", data)
-//       return res.json(data);
-//     });
+//     .then((res) => res.json())
+//     .then((data) => res.json(data))
+//     .catch((error) => console.error("Error fetching token:", error));
 // });
 
 app.get("/getToken", async (req, res) => {
@@ -52,22 +47,17 @@ app.get("/getToken", async (req, res) => {
     client_id: CLIENT_ID,
     client_secret: CLIENT_SECRET,
     code: req.query.code,
-    scope: 'repo'
+    redirect_uri: 'http://localhost:3000/',
   });
 
   try {
-    const response = await axios.get(
+    const response = await axios.post(
       "https://github.com/login/oauth/access_token",
+      params.toString(),
       {
-        params: {
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          code: req.query.code,
-          redirect_uri: `http://localhost:3000/`,
-        },
         headers: {
           "Accept": "application/json",
-          "Accept-Encoding": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       }
     );
@@ -75,7 +65,7 @@ app.get("/getToken", async (req, res) => {
     res.json({ access_token });
   } catch (err) {
     console.error("Error fetching access token:", err);
-    res.status(500).json({ error: `Failed to fetch access token ${err}` });
+    res.status(500).json({ error: `Failed to fetch access token: ${err.message}` });
   }
 });
 
