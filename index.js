@@ -55,8 +55,6 @@ app.get("/getToken", async (req, res) => {
     scope: 'repo'
   });
 
-  console.log("params", params.toString());
-
   try {
     const response = await axios.get(
       "https://github.com/login/oauth/access_token",
@@ -73,13 +71,11 @@ app.get("/getToken", async (req, res) => {
         },
       }
     );
-
-    console.log("response", response.data);
     const access_token = response.data.access_token;
     res.json({ access_token });
-  } catch (error) {
-    console.error("Error fetching access token:", error);
-    res.status(500).json({ error: "Failed to fetch access token" });
+  } catch (err) {
+    console.error("Error fetching access token:", err);
+    res.status(500).json({ error: `Failed to fetch access token ${err}` });
   }
 });
 
