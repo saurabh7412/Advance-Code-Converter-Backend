@@ -17,27 +17,32 @@ app.get("/", (req, res) => {
 
 app.get("/getToken", async (req, res) => {
   console.log("code", req.query.code);
-  const params =
-    "?client_id=" +
-    CLIENT_ID +
-    "&client_secret=" +
-    CLIENT_SECRET +
-    "&code=" +
-    req.query.code +
-    "&scope=repo";
+  const params = {
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    code: req.query.code,
+    scope: "repo"
+  };
 
   console.log("params", params);
 
-  await fetch("https://github.com/login/oauth/access_token" + params, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => res.json(data))
-    .catch((error) => console.error("Error fetching token:", error));
+  try {
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(params)
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching token:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 
 app.post("/push", async (req, res) => {
   const {
