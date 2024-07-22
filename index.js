@@ -15,32 +15,66 @@ app.get("/", (req, res) => {
   res.json({ data: "Backend Github AI" });
 });
 
+// app.get("/getToken", async (req, res) => {
+//   console.log("code", req.query.code);
+//   const params =
+//     "?client_id=" +
+//     CLIENT_ID +
+//     "&client_secret=" +
+//     CLIENT_SECRET +
+//     "&code=" +
+//     req.query.code +
+//     "&scope=repo";
+
+//   console.log("params", params);
+
+//   await fetch("https://github.com/login/oauth/access_token" + params, {
+//     method: "POST",
+//     headers: {
+//       Accept: "application/json",
+//     },
+//   })
+//     .then((res) => {
+//       console.log("res", res)
+//       return res.json()
+//     })
+//     .then((data) => {
+//       console.log("data", data)
+//       return res.json(data);
+//     });
+// });
+
 app.get("/getToken", async (req, res) => {
   console.log("code", req.query.code);
-  const params =
-    "?client_id=" +
-    CLIENT_ID +
-    "&client_secret=" +
-    CLIENT_SECRET +
-    "&code=" +
-    req.query.code +
-    "&scope=repo";
 
-  console.log("params", params);
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    code: req.query.code,
+    scope: 'repo'
+  });
 
-  await fetch("https://github.com/login/oauth/access_token" + params, {
+  console.log("params", params.toString());
+
+  await fetch("https://github.com/login/oauth/access_token", {
     method: "POST",
     headers: {
       Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
+    body: params.toString(),
   })
-    .then((res) => {
-      console.log("res", res)
-      return res.json()
+    .then((response) => {
+      console.log("res", response);
+      return response.json();
     })
     .then((data) => {
-      console.log("data", data)
-      return res.json(data);
+      console.log("data", data);
+      res.json(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching access token:", error);
+      res.status(500).send("Error fetching access token");
     });
 });
 
