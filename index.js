@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/getToken", async (req, res) => {
-  console.log(req.query.code);
+  console.log("code", req.query.code);
   const params =
     "?client_id=" +
     CLIENT_ID +
@@ -26,7 +26,7 @@ app.get("/getToken", async (req, res) => {
     req.query.code +
     "&scope=repo";
 
-  console.log(params);
+  console.log("params", params);
 
   await fetch("https://github.com/login/oauth/access_token" + params, {
     method: "POST",
@@ -35,11 +35,11 @@ app.get("/getToken", async (req, res) => {
     },
   })
     .then((res) => {
-      console.log(res)
+      console.log("res", res)
       return res.json()
     })
     .then((data) => {
-      console.log(data)
+      console.log("data", data)
       return res.json(data);
     });
 });
