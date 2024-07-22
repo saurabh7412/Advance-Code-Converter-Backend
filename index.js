@@ -57,24 +57,30 @@ app.get("/getToken", async (req, res) => {
 
   console.log("params", params.toString());
 
-  const res = await axios.get(
-    "https://github.com/login/oauth/access_token",
-    {
-      params: {
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
-        code: code,
-        redirect_uri: `your-domain/integrations/github/oauth2/callback`,
-      },
-      headers: {
-        "Accept": "application/json",
-        "Accept-Encoding": "application/json",
-      },
-    }
-  );
-  console.log("res", res.data);
-  const access_token = res.data.access_token;
-  res.json(access_token);
+  try {
+    const response = await axios.get(
+      "https://github.com/login/oauth/access_token",
+      {
+        params: {
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          code: req.query.code,
+          redirect_uri: `your-domain/integrations/github/oauth2/callback`,
+        },
+        headers: {
+          "Accept": "application/json",
+          "Accept-Encoding": "application/json",
+        },
+      }
+    );
+
+    console.log("response", response.data);
+    const access_token = response.data.access_token;
+    res.json({ access_token });
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+    res.status(500).json({ error: "Failed to fetch access token" });
+  }
 });
 
 app.post("/push", async (req, res) => {
