@@ -26,15 +26,21 @@ app.get("/getToken", async (req, res) => {
     req.query.code +
     "&scope=repo";
 
+  console.log(params);
+
   await fetch("https://github.com/login/oauth/access_token" + params, {
     method: "POST",
     headers: {
       Accept: "application/json",
     },
   })
-    .then((res) => res.json())
+    .then((res) => {
+      console.log(res)
+      return res.json()
+    })
     .then((data) => {
-      res.json(data);
+      console.log(data)
+      return res.json(data);
     });
 });
 
