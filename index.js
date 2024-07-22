@@ -31,7 +31,8 @@ app.get("/getToken", async (req, res) => {
   await fetch("https://github.com/login/oauth/access_token" + params, {
     method: "POST",
     headers: {
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      'Accept': "application/json",
     },
   })
     .then((res) => res.json())
